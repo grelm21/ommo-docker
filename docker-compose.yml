@@ -10,6 +10,8 @@ services:
       # - '/app/node_modules'
     working_dir: /app
     command: sh -c "npm install && npm run build"
+    networks:
+      - default
 
   nginx:
     container_name: balancer
@@ -25,6 +27,8 @@ services:
     ports:
       - '80:80'
       - '8080:8080'
+    networks:
+      - default
   
   application:
     container_name: application
@@ -42,6 +46,8 @@ services:
       - ../ommo-back/:/var/www/ommo_back
     depends_on:
       - db
+    networks:
+      - default
 
   db:
     container_name: postgres
@@ -58,7 +64,13 @@ services:
       # stop container then comment string below, up container without string and rebuild with uncommented string
       # problem seen on docker-desktop mac os x
       - ./bin/postgresql.conf:/var/lib/postgresql/data/postgresql.conf
+    networks:
+      - default
 
 volumes:
   postgres:
     driver: local
+
+networks:
+  default:
+    name: ommo-net
