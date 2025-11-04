@@ -1,0 +1,76 @@
+services:
+  app-vue-setup:
+    container_name: app-vue-setup
+    image: vuejs_docker:dev
+    build:
+      context: ../ommo-back
+      dockerfile: Setup.Dockerfile
+    volumes:
+      - '../ommo-front:/app'
+      # - '/app/node_modules'
+    working_dir: /app
+    command: sh -c "npm install && npm run build"
+    networks:
+      - ommo-net
+
+  nginx:
+    container_name: balancer
+    build:
+      context: .
+      dockerfile: ./Dockerfile.nginx
+    depends_on:
+      - app-vue-setup
+      - application
+    volumes:
+      - '../portgrad/dist:/usr/share/nginx/html'
+      - './nginx.conf:/etc/nginx/nginx.conf'
+    ports:
+      - '80:80'
+      - '8080:8080'
+    networks:
+      - ommo-net
+  
+  application:
+    container_name: application
+    build:
+      context: ../ommo_back
+      dockerfile: Dockerfile
+    env_file:
+      - ../ommo_back/.env
+    environment:
+      - PIDFILE=../ommo-back/tmp/pids/server_1.pid
+      - RAILS_MASTER_KEY=755bda5d9645e86cca317ccb0a7ee058
+    ports:
+      - '4040:3000'
+    volumes:
+      - ../ommo_back/:/var/www/ommo_back
+    depends_on:
+      - db
+    networks:
+      - ommo-net
+
+  db:
+    container_name: postgres
+    image: postgres:16.9-bullseye
+    environment:
+      POSTGRES_USER: ommo
+      POSTGRES_PASSWORD: '1234567890'
+      PGDATA: /tmp
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      # If postgres container contain file with permissions postgres:postrges
+      # stop container then comment string below, up container without string and rebuild with uncommented string
+      # problem seen on docker-desktop mac os x
+      - ./bin/postgresql.conf:/var/lib/postgresql/data/postgresql.conf
+    networks:
+      - ommo-net
+
+volumes:
+  postgres:
+    driver: local
+
+networks:
+  ommo-net:
+    driver: bridge
