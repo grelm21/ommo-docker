@@ -36,7 +36,7 @@ services:
       context: ../ommo-back
       dockerfile: Dockerfile
     env_file:
-      - ../ommo_back/.env
+      - ../ommo-back/.env
     environment:
       - PIDFILE=../ommo-back/tmp/pids/server_1.pid
       - RAILS_MASTER_KEY=755bda5d9645e86cca317ccb0a7ee058
