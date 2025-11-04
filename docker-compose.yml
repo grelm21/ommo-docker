@@ -3,7 +3,7 @@ services:
     container_name: app-vue-setup
     image: vuejs_docker:dev
     build:
-      context: ../ommo-back
+      context: ../ommo-front
       dockerfile: Setup.Dockerfile
     volumes:
       - '../ommo-front:/app'
@@ -33,7 +33,7 @@ services:
   application:
     container_name: application
     build:
-      context: ../ommo_back
+      context: ../ommo-back
       dockerfile: Dockerfile
     env_file:
       - ../ommo_back/.env
