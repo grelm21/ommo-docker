@@ -11,7 +11,7 @@ services:
     working_dir: /app
     command: sh -c "npm install && npm run build"
     networks:
-      - default
+      - ommo-net
 
   nginx:
     container_name: balancer
@@ -28,7 +28,7 @@ services:
       - '80:80'
       - '8080:8080'
     networks:
-      - default
+      - ommo-net
   
   application:
     container_name: application
@@ -47,7 +47,7 @@ services:
     depends_on:
       - db
     networks:
-      - default
+      - ommo-net
 
   db:
     container_name: postgres
@@ -65,12 +65,12 @@ services:
       # problem seen on docker-desktop mac os x
       - ./bin/postgresql.conf:/var/lib/postgresql/data/postgresql.conf
     networks:
-      - default
+      - ommo-net
 
 volumes:
   postgres:
     driver: local
 
 networks:
-  default:
-    name: ommo-net
+  ommo-net:
+    driver: bridge
