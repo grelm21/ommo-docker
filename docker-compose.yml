@@ -24,8 +24,8 @@ services:
     volumes:
       - '../ommo-front/dist:/usr/share/nginx/html'
       - './nginx.conf:/etc/nginx/nginx.conf'
-      - './ssl/ommo-contract.fullchain.crt:/etc/ssl/certs/ommo-contract.fullchain.crt:ro'
-      - './ssl/ommo-contract.ru.key:/etc/ssl/private/ommo-contract.key:ro'
+      - '~/ssl/ommo-contract.fullchain.crt:/etc/ssl/certs/ommo-contract.crt:ro'
+      - '~/ssl/ommo-contract.ru.key:/etc/ssl/private/ommo-contract.key:ro'
     ports:
       - '80:80'
       - '8080:8080'
